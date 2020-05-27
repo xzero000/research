@@ -3,6 +3,7 @@ import tensorflow as tf
 import numpy as np
 import datetime
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 
 # Read the dataset
 from tensorflow.examples.tutorials.mnist import input_data
@@ -83,6 +84,21 @@ def generator(z, batch_size, z_dim):
     # Dimensions of g4: batch_size x 28 x 28 x 1
     return g4
 
+
+#save image
+def save_f_image(index,z_sample):
+    fig = plt.figure(figsize = (4,4))
+    gs = gridspec.GridSpec(4,4)
+    gs.update(wspace = .005, hspace = 0.05)
+
+    for i,sample in enumerate(z_sample):
+        ax = plt.subplot(gs[i])
+        plt.axis('off')
+        ax.set_xticklabels([])
+        ax.set_aspect('equal')
+        plt.imshow(sample.reshape(28,28),cmap = 'gray')
+    plt.savefig('img/train_{}.png'.format(str(index).zfill(3)),bbox_inches = 'tight')
+    plt.close(fig) 
 
 
 """ See the fake image we make """
@@ -212,10 +228,11 @@ for i in range(300):
         # Every 100 iterations, show a generated image
         print("Iteration:", i, "at", datetime.datetime.now())
         z_batch = np.random.normal(0, 1, size=[1, z_dimensions])
-        generated_images = generator(z_placeholder, 10, z_dimensions)
+        generated_images = generator(z_placeholder, 16, z_dimensions)
         images = sess.run(generated_images, {z_placeholder: z_batch})
-        plt.imshow(images[0].reshape([28, 28]), cmap='Greys')
-        plt.savefig("img/image{}.png".format(i))
+        #plt.imshow(images[0].reshape([28, 28]), cmap='Greys')
+        #plt.savefig("img/image{}.png".format(i))
+        save_f_image(i,images)
 
         # Show discriminator's estimate
         im = images[0].reshape([1, 28, 28, 1])
