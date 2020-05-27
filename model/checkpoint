@@ -1,0 +1,2 @@
+model_checkpoint_path: "/home/r05942072/git/research/model/gan_mnist_test_1e-8.ckpt"
+all_model_checkpoint_paths: "/home/r05942072/git/research/model/gan_mnist_test_1e-8.ckpt"

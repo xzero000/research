@@ -4,7 +4,7 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
-import torchvision.datasets.mnist as mnist
+##import torchvision.datasets.mnist as mnist
 import numpy
 import time
 
@@ -125,7 +125,7 @@ G_loss = tf.reduce_mean(-tf.log(D_fake + eps))
 #set hyper paramatrics
 batch_size = 100
 l_rate = 0.001
-train_epoch = 300
+train_epoch = 3000
 epoch = 0
 index = 0
 
@@ -196,7 +196,7 @@ while epoch <= train_epoch:
     print("\n@epoch of {}, D_loss:{}, G_loss:{}, time: {}".format(epoch,np.mean(D_losses),np.mean(G_losses),t2-t1))
     t1 = t2
 
-save_path = saver.save(sess,'/model/gan_mnist_test_1e-8.ckpt')
+save_path = saver.save(sess,'/home/r05942072/git/research/model/gan_mnist_test_1e-8.ckpt')
 print('Model saved in path:%s'%save_path)
         
         
