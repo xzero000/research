@@ -101,7 +101,7 @@ with tf.Session() as sess:
                                 feed_dict={z_placeholder: z_batch})
     generated_image = generated_image.reshape([28, 28])
     plt.imshow(generated_image, cmap='Greys')
-    plt.savefig("/img/test_img.png")
+    plt.savefig("img/test_img.png")
 
 
 """ For Training GAN """
@@ -175,17 +175,17 @@ sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
 # Pre-train discriminator
-for i in range(300):
+for i in range(100):
     z_batch = np.random.normal(0, 1, size=[batch_size, z_dimensions])
     real_image_batch = mnist.train.next_batch(batch_size)[0].reshape([batch_size, 28, 28, 1])
     _, __, dLossReal, dLossFake = sess.run([d_trainer_real, d_trainer_fake, d_loss_real, d_loss_fake],
                                            {x_placeholder: real_image_batch, z_placeholder: z_batch})
 
-    if(i % 100 == 0):
-        print("dLossReal:", dLossReal, "dLossFake:", dLossFake)
+    if(i % 10 == 0):
+        print('pre-train: ',i," dLossReal:", dLossReal, "dLossFake:", dLossFake)
 
 # Train generator and discriminator together
-for i in range(100000):
+for i in range(300):
     real_image_batch = mnist.train.next_batch(batch_size)[0].reshape([batch_size, 28, 28, 1])
     z_batch = np.random.normal(0, 1, size=[batch_size, z_dimensions])
 
@@ -205,7 +205,7 @@ for i in range(100000):
     
     if i % 1000 == 0:
         # Save the model every 1000 iteration
-        save_path = saver.save(sess, "/tmp/model{}.ckpt".format(i))
+        save_path = saver.save(sess, "tmp/model{}.ckpt".format(i))
         print("Model saved in file: %s" % save_path)
 
     if i % 100 == 0:
@@ -215,7 +215,7 @@ for i in range(100000):
         generated_images = generator(z_placeholder, 1, z_dimensions)
         images = sess.run(generated_images, {z_placeholder: z_batch})
         plt.imshow(images[0].reshape([28, 28]), cmap='Greys')
-        plt.savefig("/img/image{}.png".format(i))
+        plt.savefig("img/image{}.png".format(i))
 
         # Show discriminator's estimate
         im = images[0].reshape([1, 28, 28, 1])
