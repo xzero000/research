@@ -212,7 +212,7 @@ for i in range(300):
         # Every 100 iterations, show a generated image
         print("Iteration:", i, "at", datetime.datetime.now())
         z_batch = np.random.normal(0, 1, size=[1, z_dimensions])
-        generated_images = generator(z_placeholder, 1, z_dimensions)
+        generated_images = generator(z_placeholder, 10, z_dimensions)
         images = sess.run(generated_images, {z_placeholder: z_batch})
         plt.imshow(images[0].reshape([28, 28]), cmap='Greys')
         plt.savefig("img/image{}.png".format(i))
