@@ -191,7 +191,7 @@ sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
 # Pre-train discriminator
-for i in range(100):
+for i in range(300):
     z_batch = np.random.normal(0, 1, size=[batch_size, z_dimensions])
     real_image_batch = mnist.train.next_batch(batch_size)[0].reshape([batch_size, 28, 28, 1])
     _, __, dLossReal, dLossFake = sess.run([d_trainer_real, d_trainer_fake, d_loss_real, d_loss_fake],
@@ -201,7 +201,7 @@ for i in range(100):
         print('pre-train: ',i," dLossReal:", dLossReal, "dLossFake:", dLossFake)
 
 # Train generator and discriminator together
-for i in range(300):
+for i in range(100000):
     real_image_batch = mnist.train.next_batch(batch_size)[0].reshape([batch_size, 28, 28, 1])
     z_batch = np.random.normal(0, 1, size=[batch_size, z_dimensions])
 
@@ -222,17 +222,17 @@ for i in range(300):
     if i % 1000 == 0:
         # Save the model every 1000 iteration
         save_path = saver.save(sess, "tmp/model{}.ckpt".format(i))
-        print("Model saved in file: %s" % save_path)
+        print("epoch %d ,Model saved in file: %s" % (i,save_path))
 
     if i % 100 == 0:
         # Every 100 iterations, show a generated image
         print("Iteration:", i, "at", datetime.datetime.now())
         z_batch = np.random.normal(0, 1, size=[1, z_dimensions])
-        generated_images = generator(z_placeholder, 16, z_dimensions)
+        generated_images = generator(z_placeholder, 1, z_dimensions)
         images = sess.run(generated_images, {z_placeholder: z_batch})
-        #plt.imshow(images[0].reshape([28, 28]), cmap='Greys')
-        #plt.savefig("img/image{}.png".format(i))
-        save_f_image(i,images)
+        plt.imshow(images[0].reshape([28, 28]), cmap='Greys')
+        plt.savefig("img/image{}.png".format(i))
+        #save_f_image(i,images)
 
         # Show discriminator's estimate
         im = images[0].reshape([1, 28, 28, 1])
