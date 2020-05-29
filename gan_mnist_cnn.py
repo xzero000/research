@@ -191,17 +191,17 @@ sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
 # Pre-train discriminator
-for i in range(300):
+for i in range(1000):
     z_batch = np.random.normal(0, 1, size=[batch_size, z_dimensions])
     real_image_batch = mnist.train.next_batch(batch_size)[0].reshape([batch_size, 28, 28, 1])
     _, __, dLossReal, dLossFake = sess.run([d_trainer_real, d_trainer_fake, d_loss_real, d_loss_fake],
                                            {x_placeholder: real_image_batch, z_placeholder: z_batch})
 
-    if(i % 10 == 0):
+    if(i % 100 == 0):
         print('pre-train: ',i," dLossReal:", dLossReal, "dLossFake:", dLossFake)
 
 # Train generator and discriminator together
-for i in range(100000):
+for i in range(1000000):
     real_image_batch = mnist.train.next_batch(batch_size)[0].reshape([batch_size, 28, 28, 1])
     z_batch = np.random.normal(0, 1, size=[batch_size, z_dimensions])
 
@@ -219,12 +219,12 @@ for i in range(100000):
     #     summary = sess.run(merged, {z_placeholder: z_batch, x_placeholder: real_image_batch})
     #     writer.add_summary(summary, i)
     
-    if i % 1000 == 0:
+    if i % 10000 == 0:
         # Save the model every 1000 iteration
         save_path = saver.save(sess, "tmp/model{}.ckpt".format(i))
         print("epoch %d ,Model saved in file: %s" % (i,save_path))
 
-    if i % 500 == 0:
+    if i % 2000 == 0:
         # Every 100 iterations, show a generated image
         print("Iteration:", i, "at", datetime.datetime.now())
         z_t = np.random.normal(0, 1, size=[16, z_dimensions])
@@ -239,3 +239,9 @@ for i in range(100000):
         result = discriminator(x_placeholder)
         estimate = sess.run(result, {x_placeholder: im})
         print("Estimate:", estimate)
+
+z_t = np.random.normal(0, 1, size=[16, z_dimensions])
+generated_images = generator(z_placeholder, 1, z_dimensions)
+images = sess.run(generated_images, {z_placeholder: z_t})
+save_f_image(i,images)
+print('OK!!!')
