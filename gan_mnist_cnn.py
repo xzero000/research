@@ -117,7 +117,7 @@ with tf.Session() as sess:
                                 feed_dict={z_placeholder: z_batch})
     generated_image = generated_image.reshape([28, 28])
     plt.imshow(generated_image, cmap='Greys')
-    plt.savefig("img/test_img.png")
+    plt.savefig("img2/test_img.png")
 
 
 """ For Training GAN """
@@ -227,9 +227,9 @@ for i in range(100):
     if i % 50 == 0:
         # Every 100 iterations, show a generated image
         print("Iteration:", i, "at", datetime.datetime.now())
-        z_batch = np.random.normal(0, 1, size=[16, z_dimensions])
+        z_t = np.random.normal(0, 1, size=[16, z_dimensions])
         generated_images = generator(z_placeholder, 1, z_dimensions)
-        images = sess.run(generated_images, {z_placeholder: z_batch})
+        images = sess.run(generated_images, {z_placeholder: z_t})
         #plt.imshow(images[0].reshape([28, 28]), cmap='Greys')
         #plt.savefig("img/image{}.png".format(i))
         save_f_image(i,images)
