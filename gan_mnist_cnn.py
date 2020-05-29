@@ -97,7 +97,7 @@ def save_f_image(index,z_sample):
         ax.set_xticklabels([])
         ax.set_aspect('equal')
         plt.imshow(sample.reshape(28,28),cmap = 'gray')
-    plt.savefig('img/16_train_{}.png'.format(str(index).zfill(3)),bbox_inches = 'tight')
+    plt.savefig('img2/16_train_{}.png'.format(str(index).zfill(3)),bbox_inches = 'tight')
     plt.close(fig) 
 
 
@@ -117,7 +117,7 @@ with tf.Session() as sess:
                                 feed_dict={z_placeholder: z_batch})
     generated_image = generated_image.reshape([28, 28])
     plt.imshow(generated_image, cmap='Greys')
-    plt.savefig("img/test_img.png")
+    plt.savefig("img2/test_img.png")
 
 
 """ For Training GAN """
@@ -201,7 +201,7 @@ for i in range(1000):
         print('pre-train: ',i," dLossReal:", dLossReal, "dLossFake:", dLossFake)
 
 # Train generator and discriminator together
-for i in range(1000000):
+for i in range(300000):
     real_image_batch = mnist.train.next_batch(batch_size)[0].reshape([batch_size, 28, 28, 1])
     z_batch = np.random.normal(0, 1, size=[batch_size, z_dimensions])
 
