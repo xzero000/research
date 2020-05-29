@@ -7,6 +7,7 @@ import matplotlib.gridspec as gridspec
 ##import torchvision.datasets.mnist as mnist
 import numpy
 import time
+import datetime
 
 ##path = '/home/xzero000/dataset/MNIST/raw'
 ###root = "./mnist/raw/"
@@ -124,8 +125,8 @@ G_loss = tf.reduce_mean(-tf.log(D_fake + eps))
 
 #set hyper paramatrics
 batch_size = 100
-l_rate = 0.001
-train_epoch = 3000
+l_rate = 0.01
+train_epoch = 5000
 epoch = 0
 index = 0
 
@@ -151,18 +152,18 @@ saver = tf.train.Saver()
 train_set = (mnist.train.images -0.5)/0.5
 
 #default_noise
-test_z = np.random.normal(0,1,(16,100))
+test_z = np.random.normal(0,2,(16,100))
 
 t1 = time.time()
 print('start train')
 
 while epoch <= train_epoch:
-    G_losses = []
-    D_losses = []
+    #G_losses = []
+    #D_losses = []
     #sess.graph.finalize(), for prevent memory explode
 
     #Save all fake image
-    if epoch %1 ==0:
+    if epoch %50 ==0:
         fake_image = sess.run(f_sample,{z:test_z,drop_out:0.0})
         save_f_image(index,fake_image)
         index += 1
@@ -175,26 +176,26 @@ while epoch <= train_epoch:
 
         sess.run(D_train,{x:input_x,z:input_z,drop_out:0.1})
         loss_d = sess.run(D_loss,{x:input_x,z:input_z,drop_out:0.1})
-        D_losses.append(loss_d)
+        #D_losses.append(loss_d)
 
         input_z = np.random.normal(0,1,(batch_size,100))
 
         sess.run(G_train,{z:input_z,drop_out:0.3})
         loss_g = sess.run(G_loss,{z:input_z,drop_out:0.1})
-        G_losses.append(loss_g)
-        if (i/batch_size)%100 == 0:
-            print('%d,'%(i/batch_size),end = '')
+        #G_losses.append(loss_g)
+        #if (i/batch_size)%500 == 0:
+         #   print('%d,'%(i/batch_size),end = '')
 
     epoch += 1
-    if epoch == 5:
-        l_rate = 0.01
-    if epoch == 20:
-        l_rate = 0.001
     if epoch == 50:
+        l_rate = 0.01
+    if epoch == 200:
+        l_rate = 0.001
+    if epoch == 500:
         l_rate = 0.0002
-    t2 = time.time()
-    print("\n@epoch of {}, D_loss:{}, G_loss:{}, time: {}".format(epoch,np.mean(D_losses),np.mean(G_losses),t2-t1))
-    t1 = t2
+    
+    print("\n@epoch of {}, D_loss:{}, G_loss:{}, time: {}".format(epoch,loss_d,loss_g,datetime.datetime.now()))
+    
 
 save_path = saver.save(sess,'/home/r05942072/git/research/model/gan_mnist_test_1e-8.ckpt')
 print('Model saved in path:%s'%save_path)
