@@ -191,7 +191,7 @@ sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
 # Pre-train discriminator
-for i in range(1000):
+for i in range(300):
     z_batch = np.random.normal(0, 1, size=[batch_size, z_dimensions])
     real_image_batch = mnist.train.next_batch(batch_size)[0].reshape([batch_size, 28, 28, 1])
     _, __, dLossReal, dLossFake = sess.run([d_trainer_real, d_trainer_fake, d_loss_real, d_loss_fake],
@@ -201,7 +201,7 @@ for i in range(1000):
         print('pre-train: ',i," dLossReal:", dLossReal, "dLossFake:", dLossFake)
 
 # Train generator and discriminator together
-for i in range(300000):
+for i in range(600000):
     real_image_batch = mnist.train.next_batch(batch_size)[0].reshape([batch_size, 28, 28, 1])
     z_batch = np.random.normal(0, 1, size=[batch_size, z_dimensions])
 
