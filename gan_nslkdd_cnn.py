@@ -8,6 +8,8 @@ import pandas as pd
 import time
 import csv
 from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import Normalizer
 from sklearn.compose import ColumnTransformer
 
 'packet to img and img to packet'
@@ -50,78 +52,76 @@ def i_to_p(arr_2D,length):
 
 'read data and preprocessing'
 c_name = np.arange(0,43)
+##data = pd.read_csv('KDDTrain+.txt',header = None,names = c_name)
+##data_t = pd.read_csv('KDDTest+.txt',header = None, names = c_name)
+'--------------- only ''normal'',''attack'' ----------------------'
 data = pd.read_csv('NSL-KDD/KDDtrain_normal_attack_4type_shuffle.csv',header = None,names = c_name)
+
+
 # data[0] & data[3] swap
-def count_e(arr):
-    ele = np.array([],dtype = '<U1')
-    e_c = np.array([],dtype = 'int32')
-    for i in range(len(arr)):
-        if arr[i] in ele:
-            x = np.where(ele == arr[i])
-            e_c[x] += 1
-        else:
-            y = np.array([arr[i]])
-            ele = np.append(ele,y)
-            c = 1
-            e_c = np.append(e_c,c)
-    return ele,e_c
 
-def c_2(arr,ele,e_c):
-    for i in range(len(arr)):
-        if arr[i] in ele:
-            x = np.where(ele == arr[i])
-            e_c[x] += 1
-        else:
-            y = np.array([arr[i]])
-            ele = np.append(ele,y)
-            c = 1
-            e_c = np.append(e_c,c)
-    return ele,e_c
-
-d_1,d_1c = count_e(data[1])
-print('1')
-d_2,d_2c = count_e(data[2])
-print('2')
-d_3,d_3c = count_e(data[3])
-print('Ya')
 '--- if ''KDDtrain_normal_attack_4type_shuffle.csv''------'
 '---t_1 = normal dos probe R2L U2R-----'
 t_1 = np.array(['normal', 'Dos','Probe',  'R2L', 'U2R'])
+d_1 = np.array(['tcp', 'udp', 'icmp'])
+d_2 = np.array(['ftp_data', 'other', 'private', 'http', 'remote_job', 'name',
+       'netbios_ns', 'eco_i', 'mtp', 'telnet', 'finger', 'domain_u',
+       'supdup', 'uucp_path', 'Z39_50', 'smtp', 'csnet_ns', 'uucp',
+       'netbios_dgm', 'urp_i', 'auth', 'domain', 'ftp', 'bgp', 'ldap',
+       'ecr_i', 'gopher', 'vmnet', 'systat', 'http_443', 'efs', 'whois',
+       'imap4', 'iso_tsap', 'echo', 'klogin', 'link', 'sunrpc', 'login',
+       'kshell', 'sql_net', 'time', 'hostnames', 'exec', 'ntp_u',
+       'discard', 'nntp', 'courier', 'ctf', 'ssh', 'daytime', 'shell',
+       'netstat', 'pop_3', 'nnsp', 'IRC', 'pop_2', 'printer', 'tim_i',
+       'pm_dump', 'red_i', 'netbios_ssn', 'rje', 'X11', 'urh_i',
+       'http_8001', 'aol', 'http_2784', 'tftp_u', 'harvest'])
+d_3 = np.array(['SF', 'S0', 'REJ', 'RSTR', 'SH', 'RSTO', 'S1', 'RSTOS0', 'S3', 'S2', 'OTH'])
 
 ##X_train_0, X_test_0, y_train, y_test = \
 ##    train_test_split(data[c_name[0:41]],data[c_name[41]],test_size = 0.2)
 ##train_test_split(data[column_name[1:10]],data[column_name[10]],test_size=0.25,random_state=33)
 ## 取前10列为X，第10列为y，并且分割；random_state参数的作用是为了保证每次运行程序时都以同样的方式进行分割
 
-X_train_0 = data[c_name[0:41]]
-y_train = data[c_name[41]]
-y_train = y_train.values
-
+X_train_0 = np.array(data[c_name[0:41]])
+y_train = np.array(data[c_name[41]])
 print('data load ok! ')
-new_c = np.append(c_name[0],c_name[4:41])
-new_c_hand = np.array([0, 4,  5,  7,  8,  9, 10, 12, 15, 16, 17, 18, 22, 23,31,32])
-ss = StandardScaler()
 
-ct = ColumnTransformer([('', ss, new_c_hand)], remainder='passthrough')
-##ct = ColumnTransformer([('', 'passthrough', new_c_hand)], remainder='passthrough')
-X_train = ct.fit_transform(X_train_0)
-# X_train[0][38] = 'tcp', [39] = 'http', [40] = 'SF'
-## one-hop encoder
+'one hot encoder'
 def rr(x):
     if len(x[0]) == 0:
         return 0
     else:
         return (x[0][0]+1)
-for i in range(len(X_train)):
-    x1 = np.where(d_1 == X_train[i][16])
-    x2 = np.where(d_2 == X_train[i][17])
-    x3 = np.where(d_3 == X_train[i][18])
+for i in range(len(X_train_0)):
+    x1 = np.where(d_1 == X_train_0[i][1])
+    x2 = np.where(d_2 == X_train_0[i][2])
+    x3 = np.where(d_3 == X_train_0[i][3])
+    X_train_0[i][1:4] = [x1[0][0]+1,x2[0][0]+1,x3[0][0]+1]
     y  = np.where(t_1 == y_train[i])
-    X_train[i][16:19] = [x1[0][0]+1,x2[0][0]+1,x3[0][0]+1]
     y_train[i] = rr(y)
+
+'standard scalar and minmax ,and normalizer'    
+new_c = np.append(c_name[0],c_name[4:41])
+new_c_hand = np.array([0, 4,  5,  7,  8,  9, 10, 12, 15, 16, 17, 18, 22, 23,31,32])
+ss = StandardScaler()
+mm = MinMaxScaler()
+
+ct = ColumnTransformer([('', ss, new_c_hand)], remainder='passthrough')
+X_train_s = ct.fit_transform(X_train_0)
+arr = np.arange(len(new_c_hand))
+ct = ColumnTransformer([('', mm, arr)], remainder='passthrough')
+X_train_m = ct.fit_transform(X_train_s)
 print('ss OK! ')
 
-X_train = X_train.astype('float64')
+nor = Normalizer(norm='max')
+nor_c = np.array([16,17,18,22])
+ct = ColumnTransformer([('', nor, nor_c)], remainder='passthrough')
+X_train = ct.fit_transform(X_train_m)
+print('nor OK!')
+
+X_train_0 = []
+X_train_s = []
+X_train_m = []
 y_train = y_train.astype('float64')
 
 
@@ -325,14 +325,14 @@ train_set = X_train_img
 
 """ Start Training Session """
 print('start trainning')
-epoch = 10000
+epoch = 1#0000
 saver = tf.train.Saver()
 
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
 # Pre-train discriminator
-for i in range(300):
+for i in range(1):
     z_batch = np.random.normal(0, 1, size=[batch_size, z_dimensions])
     #real_image_batch = mnist.train.next_batch(batch_size)[0].reshape([batch_size, 28, 28, 1])
     start = batch_size*i
