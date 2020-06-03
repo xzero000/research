@@ -175,12 +175,24 @@ print(t_x,'\n')
 
 print('\nadd generate data:')
 data_a = []
-with open('g_nslkdd/g_all_test1_epoch_test1.csv','r',newline = '') as csvfile:
+'----- generate data that needed labeled'
+##with open('g_nslkdd/g_all_test1_epoch_100000.csv','r',newline = '') as csvfile:
+##    rows = csv.reader(csvfile)
+##    for row in rows:
+##        data_a.append(row)
+##data_a = np.array(data_a)
+##data_a_y = rf.predict(data_a)
+'---------------------------------------------------------'
+'------- generate data on specific attack type------------'
+with open('g_nslkdd/g_U2R_test1_epoch_1000.csv','r',newline = '') as csvfile:
     rows = csv.reader(csvfile)
     for row in rows:
         data_a.append(row)
 data_a = np.array(data_a)
-data_a_y = rf.predict(data_a)
+data_a_y = np.zeros(len(data_a)) + 5
+##t_1 = np.array(['normal', 'Dos','Probe',  'R2L', 'U2R'])
+
+'------------------------------------------------------------'
 
 new_x = np.vstack((X_train,data_a))
 new_y = np.append(y_train,data_a_y)
