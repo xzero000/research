@@ -56,7 +56,7 @@ c_name = np.arange(0,43)
 ##data_t = pd.read_csv('KDDTest+.txt',header = None, names = c_name)
 '--------------- only ''normal'',''attack'' ----------------------'
 #data = pd.read_csv('NSL-KDD/KDDtrain_normal_attack_4type_shuffle.csv',header = None,names = c_name)
-data = pd.read_csv('NSL-KDD/KDDtrain_U2R.csv',header = None,names = c_name)
+data = pd.read_csv('NSL-KDD/KDDtrain_R2L.csv',header = None,names = c_name)
 
 
 # data[0] & data[3] swap
@@ -326,14 +326,14 @@ train_set = X_train_img
 
 """ Start Training Session """
 print('start trainning')
-epoch = 1000
+epoch = 100000
 saver = tf.train.Saver()
 
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
 # Pre-train discriminator
-for i in range(100):
+for i in range(300):
     z_batch = np.random.normal(0, 1, size=[batch_size, z_dimensions])
     #real_image_batch = mnist.train.next_batch(batch_size)[0].reshape([batch_size, 28, 28, 1])
     start = (batch_size*i)%len(train_set)
@@ -390,7 +390,7 @@ for i in range(epoch):
 print('Generate Data')
 ww = []
 for i in range(10):
-    z_t = np.random.normal(0, 1.5, size=[1000, z_dimensions])
+    z_t = np.random.normal(0, 2, size=[1000, z_dimensions])
     generated_images = generator(z_placeholder, 1, z_dimensions)
     images = sess.run(generated_images, {z_placeholder: z_t})
     li = len(images)
@@ -400,7 +400,7 @@ for i in range(10):
         tmp = i_to_p(images[j],f)
         g_p[j] = tmp
         ww.append(tmp)
-with open('g_nslkdd/g_U2R_test1_epoch_%d.csv' %epoch,'w',newline = '') as csvfile:
+with open('g_nslkdd/g_R2L_test1_epoch_%d.csv' %epoch,'w',newline = '') as csvfile:
     writer = csv.writer(csvfile)
     #for i in range(len(ww)):
     writer.writerows(ww)
