@@ -55,7 +55,8 @@ c_name = np.arange(0,43)
 ##data = pd.read_csv('KDDTrain+.txt',header = None,names = c_name)
 ##data_t = pd.read_csv('KDDTest+.txt',header = None, names = c_name)
 '--------------- only ''normal'',''attack'' ----------------------'
-data = pd.read_csv('NSL-KDD/KDDtrain_normal_attack_4type_shuffle.csv',header = None,names = c_name)
+#data = pd.read_csv('NSL-KDD/KDDtrain_normal_attack_4type_shuffle.csv',header = None,names = c_name)
+data = pd.read_csv('NSL-KDD/KDDtrain_U2R.csv',header = None,names = c_name)
 
 
 # data[0] & data[3] swap
@@ -325,17 +326,17 @@ train_set = X_train_img
 
 """ Start Training Session """
 print('start trainning')
-epoch = 100000
+epoch = 1000
 saver = tf.train.Saver()
 
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
 # Pre-train discriminator
-for i in range(300):
+for i in range(100):
     z_batch = np.random.normal(0, 1, size=[batch_size, z_dimensions])
     #real_image_batch = mnist.train.next_batch(batch_size)[0].reshape([batch_size, 28, 28, 1])
-    start = batch_size*i
+    start = (batch_size*i)%len(train_set)
     input_set = train_set[start:start+batch_size].reshape([batch_size, 28, 28, 1])    
     _, __, dLossReal, dLossFake = sess.run([d_trainer_real, d_trainer_fake, d_loss_real, d_loss_fake],
                                            {x_placeholder: input_set, z_placeholder: z_batch})
@@ -399,7 +400,7 @@ for i in range(10):
         tmp = i_to_p(images[j],f)
         g_p[j] = tmp
         ww.append(tmp)
-with open('g_nslkdd/g_all_test1_epoch_%d.csv' %epoch,'w',newline = '') as csvfile:
+with open('g_nslkdd/g_U2R_test1_epoch_%d.csv' %epoch,'w',newline = '') as csvfile:
     writer = csv.writer(csvfile)
     #for i in range(len(ww)):
     writer.writerows(ww)
