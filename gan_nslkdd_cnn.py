@@ -325,7 +325,7 @@ train_set = X_train_img
 
 """ Start Training Session """
 print('start trainning')
-epoch = 1000000
+epoch = 100000
 saver = tf.train.Saver()
 
 sess = tf.Session()
@@ -395,12 +395,13 @@ for i in range(10):
     li = len(images)
     f = 41
     g_p = np.zeros((li,f))
-    for i in range(li):
-        tmp = i_to_p(images[i],f)
-        g_p[i] = tmp
-    ww.append(g_p)
-with open('g_nslkdd/g_all_test1_epoch%d.csv' %epoch,'w',newline = '') as csvfile:
+    for j in range(li):
+        tmp = i_to_p(images[j],f)
+        g_p[j] = tmp
+        ww.append(tmp)
+with open('g_nslkdd/g_all_test1_epoch_test%d.csv' %epoch,'w',newline = '') as csvfile:
     writer = csv.writer(csvfile)
+    #for i in range(len(ww)):
     writer.writerows(ww)
 #save_f_image(i,images)
 print('OK!!!')
