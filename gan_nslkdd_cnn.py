@@ -325,7 +325,7 @@ train_set = X_train_img
 
 """ Start Training Session """
 print('start trainning')
-epoch = 100000
+epoch = 10000
 saver = tf.train.Saver()
 
 sess = tf.Session()
@@ -346,7 +346,7 @@ for i in range(300):
 # Train generator and discriminator together
 for i in range(epoch):
     #real_image_batch = mnist.train.next_batch(batch_size)[0].reshape([batch_size, 28, 28, 1])
-    start = batch_size*i
+    start = (batch_size*i)%len(train_set)
     input_set = train_set[start:start+batch_size].reshape([batch_size, 28, 28, 1]) 
     z_batch = np.random.normal(0, 1, size=[batch_size, z_dimensions])
 
@@ -386,17 +386,21 @@ for i in range(epoch):
         estimate = sess.run(result, {x_placeholder: im})
         print("Estimate:", estimate)
 
-z_t = np.random.normal(0, 1, size=[16, z_dimensions])
-generated_images = generator(z_placeholder, 1, z_dimensions)
-images = sess.run(generated_images, {z_placeholder: z_t})
-li = len(images)
-f = 41
-g_p = np.zeros((li,f))
-for i in range(li):
-    tmp = i_to_p(images[i],f)
-    g_p[i] = tmp
+print('Generate Data')
+ww = []
+for i in range(10):
+    z_t = np.random.normal(0, 1.5, size=[1000, z_dimensions])
+    generated_images = generator(z_placeholder, 1, z_dimensions)
+    images = sess.run(generated_images, {z_placeholder: z_t})
+    li = len(images)
+    f = 41
+    g_p = np.zeros((li,f))
+    for i in range(li):
+        tmp = i_to_p(images[i],f)
+        g_p[i] = tmp
+    ww.append(g_p)
 with open('g_nslkdd/g_all_test1_epoch%d.csv' %epoch,'w',newline = '') as csvfile:
     writer = csv.writer(csvfile)
-    writer.writerows(g_p)
+    writer.writerows(ww)
 #save_f_image(i,images)
 print('OK!!!')
