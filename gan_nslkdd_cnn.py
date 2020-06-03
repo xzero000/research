@@ -399,7 +399,7 @@ for i in range(10):
         tmp = i_to_p(images[j],f)
         g_p[j] = tmp
         ww.append(tmp)
-with open('g_nslkdd/g_all_test1_epoch_test%d.csv' %epoch,'w',newline = '') as csvfile:
+with open('g_nslkdd/g_all_test1_epoch_%d.csv' %epoch,'w',newline = '') as csvfile:
     writer = csv.writer(csvfile)
     #for i in range(len(ww)):
     writer.writerows(ww)
