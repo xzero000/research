@@ -325,7 +325,7 @@ train_set = X_train_img
 
 """ Start Training Session """
 print('start trainning')
-epoch = 200000
+epoch = 1000000
 saver = tf.train.Saver()
 
 sess = tf.Session()
