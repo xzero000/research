@@ -325,14 +325,14 @@ train_set = X_train_img
 
 """ Start Training Session """
 print('start trainning')
-epoch = 1#0000
+epoch = 200000
 saver = tf.train.Saver()
 
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
 # Pre-train discriminator
-for i in range(1):
+for i in range(300):
     z_batch = np.random.normal(0, 1, size=[batch_size, z_dimensions])
     #real_image_batch = mnist.train.next_batch(batch_size)[0].reshape([batch_size, 28, 28, 1])
     start = batch_size*i
